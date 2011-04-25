@@ -1,0 +1,9 @@
+24995fda775c0903ef6eb82153e3eaed *DESCRIPTION
+458f751a15eae25511720e420a4e1be4 *NAMESPACE
+f9d576173e37304b8ac2d43b90e023bc *R/dynamicFBA.R
+4e9831e99c67314e069fc4dbdbedf902 *R/optsol_dynamicFBA.R
+3d1941396b89a3f55cd7c5ed4e76cc1c *data/Ec_core.rda
+34f8c392ed51e3c34499351fd79e4487 *man/Ec_core.Rd
+780a8d243a3c1e5628ed6254c6532b2e *man/dynamicFBA.Rd
+ffa9a5614b8735765aba108baeb8626b *man/optsol_dynamicFBA-class.Rd
+81d92451eb24a72081a0a407bd724722 *man/sybilDynFBA-package.Rd
