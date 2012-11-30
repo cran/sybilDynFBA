@@ -11,7 +11,7 @@ setClass("optsol_dynamicFBA",
 	timeVec="numeric",             # Vector of time points
 	biomassVec="numeric"           # Vector of biomass values
       ),
-      contains = "optsol_simpleFBA",
+      contains = "optsol_optimizeProb",
       package = "sybil"
 )
 
@@ -22,15 +22,18 @@ setClass("optsol_dynamicFBA",
 
 # 2/6-Constructor: to be added to file AllClasses-constructors.R
 # optsol_dynamicFBAClass
-optsol_dynamicFBA <- function(solver, method, nprob, lpdir, ncols, nrows, 
-                objf, fld,concmat,exRxn,tmVec,bmVec) {
+optsol_dynamicFBA <- function(solver, method, nprob,
+                #lpdir,
+                ncols, nrows, 
+                #objf,
+                fld,concmat,exRxn,tmVec,bmVec) {
     if (missing(solver) || 
         missing(method) ||
         missing(nprob)  ||
-        missing(lpdir)  ||
+        #missing(lpdir)  ||
         missing(ncols)  ||
         missing(nrows)  ||
-        missing(objf)   ||
+        #missing(objf)   ||
         missing(fld)    ||
         missing(bmVec) ||
         missing(tmVec)
@@ -54,8 +57,8 @@ optsol_dynamicFBA <- function(solver, method, nprob, lpdir, ncols, nrows,
         lp_obj       = numeric(nprob),
         lp_ok        = integer(nprob),
         lp_stat      = integer(nprob),
-        lp_dir       = as.character(lpdir),
-        obj_function = as.character(objf),
+        #lp_dir       = as.character(lpdir),
+        #obj_function = as.character(objf),
         fluxdist     = fldist,
      #   num_of_steps_executed=nsteps,
 	concentrationMatrix=concmat,
@@ -70,7 +73,7 @@ optsol_dynamicFBA <- function(solver, method, nprob, lpdir, ncols, nrows,
 
 # 3/6-dynamicFBA: dynamicFBA.R
 ##              3.1 Check
-##              3.2 PrepProbObj -> get OptObj
+##              3.2 optimizeProb -> get OptObj
 ##              3.3 Set Bounds
 ##              3.4 Call SimpleFBA
 ##              3.5 Store Solution

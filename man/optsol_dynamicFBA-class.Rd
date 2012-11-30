@@ -9,7 +9,7 @@
 \title{Class \code{"optsol_dynamicFBA"}}
 \description{
  Structure of the class \code{"optsol_dynamicFBA"}. Objects of that class are
-  returned by the function \code{\link{dynamicFBA}}. Extends the Class \code{\link{optsol_simpleFBA}}.
+  returned by the function \code{\link{dynamicFBA}}. Extends the Class \code{\linkS4class{optsol_optimizeProb}}.
 }
 \section{Objects from the Class}{
   Objects can be created by calls of the function \code{optsol_dynamicFBA}:
@@ -70,8 +70,8 @@
   }% describe
 }%slots
 \section{Extends}{
-Class \code{"\linkS4class{optsol_simpleFBA}"}, directly.
-Class \code{"\linkS4class{optsol}"}, by class "optsol_simpleFBA", distance 2.
+Class \code{"\linkS4class{optsol_optimizeProb}"}, directly.
+Class \code{"\linkS4class{optsol}"}, by class "optsol_optimizeProb", distance 2.
 }
 \section{Methods}{
   \describe{
@@ -85,7 +85,7 @@ Class \code{"\linkS4class{optsol}"}, by class "optsol_simpleFBA", distance 2.
 List of reaction id's to be ploted
 }
   \item{\dots}{ 
- Further arguments passed to \code{\link{prepProbObj}}.  Argument
+ Further arguments passed to \code{\linkS4class{sysBiolAlg}}.  Argument
     \code{solverParm} is a good candidate.
 }
 }
@@ -102,7 +102,7 @@ Abdelmoneim Amer Desouki
 \seealso{
  \code{\link{checkOptSol}},
   \code{\linkS4class{optsol}},
-  \code{\linkS4class{optsol_simpleFBA}}
+  \code{\linkS4class{optsol_optimizeProb}}
 }
 \examples{
 showClass("optsol_dynamicFBA")

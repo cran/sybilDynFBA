@@ -8,9 +8,9 @@
 # The algorithm is the same.
 
 dynamicFBA <- function (model,substrateRxns,initConcentrations,initBiomass,timeStep,nSteps,exclUptakeRxns,
- 		  lpdir = SYBIL_SETTINGS("OPT_DIRECTION"),
-                  solver = SYBIL_SETTINGS("SOLVER"),
-                  method = SYBIL_SETTINGS("METHOD"), 
+ 		  #lpdir = SYBIL_SETTINGS("OPT_DIRECTION"),
+                  #solver = SYBIL_SETTINGS("SOLVER"),
+                  #method = SYBIL_SETTINGS("METHOD"), 
                   #solverParm = SYBIL_SETTINGS("SOLVER_CTRL_PARM"),
                   fld = FALSE,verboseMode = 2, ...){
 #PARAMETERS:
@@ -65,7 +65,7 @@ if (missing(exclUptakeRxns)){
 
 # Find exchange reactions
 excReact = findExchReact(model);
-excReactInd=(react_id(model) %in% react_id(excReact$exchange));
+excReactInd=(react_id(model) %in% react_id(excReact));#excReact$exchange
 #represent extra cellular reaction with boolean vector.
 exclUptakeRxnsInd=is.element(react_id(model) ,exclUptakeRxns);
 #Exclude reactions with concentrations that will not be changed 
@@ -108,15 +108,18 @@ biomassVec = biomass;
 timeVec = 0;
 ##------------------------------------- Prepare Problem object --------------------##
 # get OptObj instance
-lpmod <- prepProbObj(model,
-                         nCols      = react_num(model),
-                         nRows      = met_num(model),
-             #            alg        = "FBA",
-                         solver     = solver,
-                         method     = method,
-                         lpdir      = lpdir
-                         #solverParm = solverParm
-             )
+#lpmod <- prepProbObj(model,
+#                         nCols      = react_num(model),
+#                         nRows      = met_num(model),
+#             #            alg        = "FBA",
+#                         solver     = solver,
+#                         method     = method,
+#                         lpdir      = lpdir
+#                         #solverParm = solverParm
+#             )
+
+lpmod <- sybil::sysBiolAlg(model, algorithm = "fba", ...)
+
 ##-----------------------------------------------------------------------------##
  if (verboseMode > 2) print('Step number    Biomass\n');
 # Inititialize progress bar ...');
@@ -127,9 +130,10 @@ for (stepNo in 1:nSteps){
 #    if (verboseMode == 2)  progr <- .progressBar(stepNo, nSteps, progr);
       
     # Run FBA
-      sol = simpleFBA(lpmod,fld=TRUE,solver= solver,method= method,);
+      #sol = simpleFBA(lpmod,fld=TRUE,solver= solver,method= method,);
+      sol = sybil::optimizeProb(lpmod);
       mu =  sol$obj;  ##objvalue sol.f
-    if ( length(checkSolStat(sol$stat,solver))!=0 ){## checkSolStat
+    if ( length(checkSolStat(sol$stat,solver(problem(lpmod))))!=0 ){## checkSolStat
         print('No feasible solution - nutrients exhausted\n');
         break;
     }
@@ -155,8 +159,8 @@ for (stepNo in 1:nSteps){
     uptakeBound=ifelse(abs(uptakeBound) < 1e-9,0,uptakeBound);
 ## Change lower bounds according to the result of last step
     #lowbnd(model)[excReactInd]  = -uptakeBound[excReactInd];  
-    uppb_tmp <- getColsUppBnds(lpmod, which(excReactInd));
-    changeColsBnds(lpmod,which(excReactInd),lb=-uptakeBound[excReactInd],ub=uppb_tmp);
+    uppb_tmp <- getColsUppBnds(problem(lpmod), which(excReactInd));
+    changeColsBnds(problem(lpmod),which(excReactInd),lb=-uptakeBound[excReactInd],ub=uppb_tmp);
     
     if (verboseMode > 2) print(paste(stepNo,sep="    ",biomass));
     #waitbar(stepNo/nSteps,h);
@@ -165,13 +169,11 @@ for (stepNo in 1:nSteps){
 
 ## Preparing OUTPUT
 #concentrationMatrix,excRxnNames,timeVec,biomassVec
-return (optsol_dynamicFBA(solver = solver,
-		      method = method,
+return (optsol_dynamicFBA(solver = solver(problem(lpmod)),
+		      method = method(problem(lpmod)),
 		      nprob  = stepNo,
-		      lpdir  = lpdir,
 		      ncols  = react_num(model),
 		      nrows  = met_num(model),
-		      objf   = printObjFunc(model),
 		      fld    = fld,
 		      concmat=concentrationMatrix,
 		      exRxn=excRxnNames,
