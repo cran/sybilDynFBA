@@ -16,7 +16,7 @@
 
 \format{An object of class \code{modelorg}}
 
-\source{\url{http://gcrg.ucsd.edu/organisms/ecoli/ecoli_sbml.html}}
+\source{\url{http://gcrg.ucsd.edu/Downloads/EcoliCore}}
 
 \references{
   Bernhard Ø. Palsson (2006).

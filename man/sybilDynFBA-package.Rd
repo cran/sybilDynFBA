@@ -6,18 +6,18 @@
   Dynamic Flux Balance Analysis
 }
 \description{
-The package \code{sybilDynFBA} implements dynamic flux balance anaylsis as proposed by Verma et al (1994). 
-It uses functions from package \code{sybil} to find standard FBA solution. Solution can also be ploted.
+The package \code{sybilDynFBA} implements dynamic flux balance analysis as proposed by Varma et al (1994). 
+It uses functions from package \code{sybil} to find standard FBA solution. Solution can also be plotted.
 }
 \details{
 \tabular{ll}{
 Package: \tab sybilDynFBA\cr
 Type: \tab Package\cr
-Version: \tab 0.0.1\cr
-Date: \tab 2011-04-20\cr
+Version: \tab 1.0.0\cr
+Date: \tab 2015-07-24\cr
 License: \tab GPL Version 3\cr
 LazyLoad: \tab yes\cr
-Depends: \tab \code{\link{sybil}}, methods\cr
+Depends: \tab \code{\link{sybil}}\cr
 }
 }
 \author{
@@ -45,7 +45,8 @@ Maintainer: Abdelmoneim Amer Desouki <abdelmoneim.amer@uni-duesseldorf.de>
         lowbnd(Ec_core)[react_id(Ec_core)=='EX_glc(e)']=-10;
         lowbnd(Ec_core)[react_id(Ec_core)=='EX_o2(e)']=-18;
 	## run dynamicFBA(), Ec_df will be an object of class \code{\link{optsol_dynamicFBA}}
-	Ec_df <- dynamicFBA(Ec_core,substrateRxns={'EX_glc(e)'},initConcentrations=40,initBiomass=.035,timeStep=.25,nSteps=20,verbose=3)
+	Ec_df <- dynamicFBA(Ec_core,substrateRxns={'EX_glc(e)'},initConcentrations=40,
+	initBiomass=.035,timeStep=.25,nSteps=20,verbose=3)
 
 	## plot biomass and reactions
 	plot(Ec_df,plotRxns=c('EX_glc(e)','EX_ac(e)'));

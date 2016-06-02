@@ -67,6 +67,11 @@
 	Object of class \code{"numeric"} 
             Vector of biomass values
     }
+	
+	 \item{all_fluxes}{
+		Object of class \code{"matrix"}
+        contains fluxes of all reactions at all steps
+  }
   }% describe
 }%slots
 \section{Extends}{

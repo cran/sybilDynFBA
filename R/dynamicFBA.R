@@ -8,10 +8,7 @@
 # The algorithm is the same.
 
 dynamicFBA <- function (model,substrateRxns,initConcentrations,initBiomass,timeStep,nSteps,exclUptakeRxns,
- 		  #lpdir = SYBIL_SETTINGS("OPT_DIRECTION"),
-                  #solver = SYBIL_SETTINGS("SOLVER"),
-                  #method = SYBIL_SETTINGS("METHOD"), 
-                  #solverParm = SYBIL_SETTINGS("SOLVER_CTRL_PARM"),
+				  retOptSol = TRUE,
                   fld = FALSE,verboseMode = 2, ...){
 #PARAMETERS:
 #===========
@@ -24,6 +21,8 @@ dynamicFBA <- function (model,substrateRxns,initConcentrations,initBiomass,timeS
 # initBiomass           Initial biomass (must be non zero)
 # timeStep              Time step size
 # nSteps                Maximum number of time steps
+# fld                   indicates if all fluxes at all steps will be returned.
+# retOptSol             indicates if optsol calss will be returned or simple list
 #
 #OPTIONAL PARAMETERS
 #===================
@@ -37,6 +36,8 @@ dynamicFBA <- function (model,substrateRxns,initConcentrations,initBiomass,timeS
 # excRxnNames           Names of exchange reactions for the EC metabolites
 # timeVec               Vector of time points
 # biomassVec            Vector of biomass values
+# all_fluxes            Matrix containing the fluxes of all reactions at different steps
+
 #
 # If no initial concentration is given for a substrate that has an open
 # uptake in the model (i.e. model.lb < 0) the concentration is assumed to
@@ -124,29 +125,37 @@ lpmod <- sybil::sysBiolAlg(model, algorithm = "fba", ...)
  if (verboseMode > 2) print('Step number    Biomass\n');
 # Inititialize progress bar ...');
 #if (verboseMode == 2)  progr <- .progressBar();
+all_fluxes=NULL;
+all_stat=NULL;
 
 for (stepNo in 1:nSteps){
     
 #    if (verboseMode == 2)  progr <- .progressBar(stepNo, nSteps, progr);
       
     # Run FBA
-      #sol = simpleFBA(lpmod,fld=TRUE,solver= solver,method= method,);
       sol = sybil::optimizeProb(lpmod);
       mu =  sol$obj;  ##objvalue sol.f
     if ( length(checkSolStat(sol$stat,solver(problem(lpmod))))!=0 ){## checkSolStat
         print('No feasible solution - nutrients exhausted\n');
         break;
     }
+	all_stat = c(all_stat,sol$stat)
    uptakeFlux = sol$fluxes[excReactInd];
    biomass = biomass*exp(mu*timeStep);
     #biomass = biomass*(1+mu*timeStep);
     biomassVec = c(biomassVec,biomass);
-    
+	if(fld){
+		if (stepNo == 1) {
+			all_fluxes = sol$fluxes;
+		}else{
+			all_fluxes = cbind(all_fluxes,sol$fluxes);
+		}
+    }
     # Update concentrations
     concentrations[excReactInd]= concentrations[excReactInd] - uptakeFlux/mu*biomass*(1-exp(mu*timeStep));
     #concentrations = concentrations + uptakeFlux*biomass*timeStep;
     concentrations[concentrations <= 0] = 0;
-    concentrationMatrix = c(concentrationMatrix,concentrations[excReactInd]);
+    concentrationMatrix = cbind(concentrationMatrix,concentrations[excReactInd]);
       
     # Update bounds for uptake reactions
     uptakeBound[excReactInd] =  concentrations[excReactInd]/(biomass*timeStep);
@@ -167,18 +176,35 @@ for (stepNo in 1:nSteps){
     timeVec = c(timeVec,stepNo*timeStep);
 }# end loop
 
+# browser();
+row.names(concentrationMatrix)=react_id(model)[excReactInd];
 ## Preparing OUTPUT
 #concentrationMatrix,excRxnNames,timeVec,biomassVec
-return (optsol_dynamicFBA(solver = solver(problem(lpmod)),
-		      method = method(problem(lpmod)),
-		      nprob  = stepNo,
-		      ncols  = react_num(model),
-		      nrows  = met_num(model),
-		      fld    = fld,
-		      concmat=concentrationMatrix,
-		      exRxn=excRxnNames,
-                      tmVec=timeVec,  
-                      bmVec=biomassVec
-                      )
-  )
+if (isTRUE(retOptSol)) {
+
+	return (optsol_dynamicFBA(solver = solver(problem(lpmod)),
+				  method = method(problem(lpmod)),
+				  nprob  = stepNo,
+				  ncols  = react_num(model),
+				  nrows  = met_num(model),
+				  fld    = fld,
+				  all_fluxes = all_fluxes,
+				  concmat=concentrationMatrix,
+				  exRxn=excRxnNames,
+						  tmVec=timeVec,  
+						  bmVec=biomassVec
+						  )
+	  )
+}else{
+		return(optsol <- list(		  nprob  = stepNo,
+				  ncols  = react_num(model),
+				  nrows  = met_num(model),
+				  all_fluxes = all_fluxes,
+				  all_stat=all_stat,
+				  concentrationMatrix=concentrationMatrix,
+				  excRxnNames=excRxnNames,
+						  timeVec=timeVec,  
+						  biomassVec=biomassVec
+			                  ))
+}
 }

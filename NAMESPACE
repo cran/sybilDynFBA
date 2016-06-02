@@ -1,4 +1,7 @@
 import(sybil)
+import(methods)
+importFrom("graphics", "par", "layout", "points", "lines","legend")
+importFrom("stats", "spline")
 
 export(dynamicFBA)
 export(plot)

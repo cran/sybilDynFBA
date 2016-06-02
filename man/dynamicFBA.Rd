@@ -6,20 +6,24 @@
 
 \title{dynamic flux balance analysis}
 \description{
-Calculate concentrations of metabolites of exchange reactions at defined time points given the initial concentrations.
-To accomplish this task this function calls \code{\link{optimizeProb}} function to get the fluxes  then update the concentrations and the reaction boundaries ..etc.
+Calculate concentrations of metabolites of exchange reactions at defined time points 
+	given the initial concentrations.
+To accomplish this task this function calls \code{\link{optimizeProb}} function to 
+	get the fluxes  then update the concentrations and the reaction boundaries ..etc.
 }
 
 \usage{
-dynamicFBA(model, substrateRxns, initConcentrations, initBiomass, timeStep, nSteps, exclUptakeRxns, 
-%lpdir = SYBIL_SETTINGS("OPT_DIRECTION"), solver = SYBIL_SETTINGS("SOLVER"), method = SYBIL_SETTINGS("METHOD"), 
+dynamicFBA(model, substrateRxns, initConcentrations, initBiomass, timeStep, nSteps, 
+	exclUptakeRxns, 
+	retOptSol = TRUE,
  fld = FALSE, verboseMode = 2, ...)
 }
 
 \arguments{
   \item{model}{   An object of class \code{\link{modelorg}}.}
   \item{substrateRxns}{
- List of exchange reaction names for substrates initially in the media that may change (e.g. not h2o or co2)
+ List of exchange reaction names for substrates initially in the media that may change 
+ (e.g. not h2o or co2)
 }
   \item{initConcentrations}{
 The given start concentrations of substrates
@@ -31,28 +35,17 @@ The given start concentrations of substrates
    Define the points of time to evaluate the problem at.
 }
   \item{nSteps}{
- The maximum number of steps, the procedure may stop before completing this number when the substrate run out.
+ The maximum number of steps, the procedure may stop before completing this number when 
+ the substrate run out.
 }
   \item{exclUptakeRxns}{
- List of uptake reactions whose substrate concentrations do not change (Default ={'EX_co2(e)','EX_o2(e)','EX_h2o(e)','EX_h(e)'})
+ List of uptake reactions whose substrate concentrations do not change 
+ (Default ={'EX_co2(e)','EX_o2(e)','EX_h2o(e)','EX_h(e)'})
 }
-%   \item{lpdir}{
-%   Character value, direction of optimisation.  Can be set to \code{"min"} or
-%     \code{"max"}.\cr
-%     Default: \code{SYBIL_SETTINGS("OPT_DIRECTION")}.
-% }
-%   \item{solver}{
-% Single character value.  The solver to use.  See
-%     \code{\link{SYBIL_SETTINGS}} for possible values.\cr
-%     Default: \code{SYBIL_SETTINGS("SOLVER")}.
-% }
-%   \item{method}{
-%  Single character value.  The optimization algorithm to use.  Possible values
-%     depend on the setting in \code{solver}.  See \code{\link{SYBIL_SETTINGS}} for
-%     possible values.\cr
-%     Default: \code{SYBIL_SETTINGS("METHOD")}.
-% }
- 
+  \item{retOptSol}{ 
+    Boolean.  indicates if optsol calss will be returned or simple list.\cr
+    Default: \code{TRUE}
+}
   \item{fld}{ 
     Boolean.  Save the resulting flux distribution.\cr
     Default: \code{FALSE}
@@ -101,7 +94,8 @@ Quantitative prediction of cellular metabolism with
         lowbnd(Ec_core)[react_id(Ec_core)=='EX_glc(e)']=-10;
         lowbnd(Ec_core)[react_id(Ec_core)=='EX_o2(e)']=-18;
 	## run dynamicFBA(), Ec_df will be an object of class \code{\link{optsol_dynamicFBA}}
-	Ec_df <- dynamicFBA(Ec_core,substrateRxns={'EX_glc(e)'},initConcentrations=10,initBiomass=.035,timeStep=.25,nSteps=20,verbose=3)
+	Ec_df <- dynamicFBA(Ec_core,substrateRxns={'EX_glc(e)'},initConcentrations=10,
+		initBiomass=.035,timeStep=.25,nSteps=20,verbose=3)
 
 	## plot biomass and reactions
 	plot(Ec_df,plotRxns=c('EX_glc(e)','EX_ac(e)'));

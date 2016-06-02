@@ -6,10 +6,11 @@
 
 setClass("optsol_dynamicFBA",
       representation(
-	concentrationMatrix="numeric", # Matrix of extracellular metabolite concentrations
+	concentrationMatrix="matrix", # Matrix of extracellular metabolite concentrations
 	excRxnNames="character",       # Names of exchange reactions for the EC metabolites
 	timeVec="numeric",             # Vector of time points
 	biomassVec="numeric"           # Vector of biomass values
+	, all_fluxes="matrix" 				# Matrix of all fluxes at all steps   24/7/2015
       ),
       contains = "optsol_optimizeProb",
       package = "sybil"
@@ -26,7 +27,7 @@ optsol_dynamicFBA <- function(solver, method, nprob,
                 #lpdir,
                 ncols, nrows, 
                 #objf,
-                fld,concmat,exRxn,tmVec,bmVec) {
+                fld,concmat,exRxn,tmVec,bmVec,all_fluxes) {
     if (missing(solver) || 
         missing(method) ||
         missing(nprob)  ||
@@ -36,13 +37,14 @@ optsol_dynamicFBA <- function(solver, method, nprob,
         #missing(objf)   ||
         missing(fld)    ||
         missing(bmVec) ||
-        missing(tmVec)
+        missing(tmVec)  ||
+		missing(all_fluxes)
        ) {
         stop("Not enough arguments for creating an object of class optsol_dynamicFBA!")
     }
 
     if (fld == TRUE) {
-        fldist <- fluxDistribution(0, ncols, nprob)
+        fldist <- fluxDistribution(all_fluxes, ncols, nprob)
     }
     else {
         fldist <- fluxDistribution(NA)
@@ -64,7 +66,8 @@ optsol_dynamicFBA <- function(solver, method, nprob,
 	concentrationMatrix=concmat,
 	excRxnNames=exRxn,
 	timeVec= tmVec,  
-        biomassVec= bmVec
+        biomassVec = bmVec,
+		all_fluxes = all_fluxes
        )
 }
 
