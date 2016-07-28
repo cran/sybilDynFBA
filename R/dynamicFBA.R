@@ -181,7 +181,7 @@ row.names(concentrationMatrix)=react_id(model)[excReactInd];
 ## Preparing OUTPUT
 #concentrationMatrix,excRxnNames,timeVec,biomassVec
 if (isTRUE(retOptSol)) {
-
+    if(is.null(all_fluxes)) all_fluxes=as.matrix(NA);
 	return (optsol_dynamicFBA(solver = solver(problem(lpmod)),
 				  method = method(problem(lpmod)),
 				  nprob  = stepNo,
