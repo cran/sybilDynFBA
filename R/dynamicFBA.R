@@ -74,6 +74,12 @@ excReactInd = excReactInd & !exclUptakeRxnsInd;   #excInd & ~ismember(model.rxns
 #get reaction names
 excRxnNames =react_id(model)[excReactInd];                #excRxnNames = model.rxns(excInd);
 
+#### Bug fix suggested by Silvio Waschina
+  subrxnIDorder <- order(match(substrateRxns, react_id(model)))
+  substrateRxns <- substrateRxns[subrxnIDorder]
+  initConcentrations <- initConcentrations[subrxnIDorder]
+###############
+
 substrateRxnsInd=(react_id(model) %in% substrateRxns)
 # Figure out if substrate reactions are correct: all substrate reactions should be exchange reactions.
 missingSub = substrateRxnsInd & !excReactInd;

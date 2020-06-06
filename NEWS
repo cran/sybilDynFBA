@@ -1,0 +1,15 @@
+sybilDynFBA Version History
+
+
+# ------------------------------------------------------- #
+Version 1.0.2   2020-06-06
+# ------------------------------------------------------- #
+    - Fixed Bug that was swapping concentrations
+    - added parameter for plotting legend_xpos, legend_ypos and legend_cex
+    - added new example
+
+# ------------------------------------------------------- #
+Version 1.0.1    2012-04-13
+# ------------------------------------------------------- #
+
+

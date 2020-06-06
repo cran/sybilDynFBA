@@ -42,13 +42,30 @@ Maintainer: Abdelmoneim Amer Desouki <abdelmoneim.amer@uni-duesseldorf.de>
 
 	## load the example data set
 	data(Ec_core)
-        lowbnd(Ec_core)[react_id(Ec_core)=='EX_glc(e)']=-10;
-        lowbnd(Ec_core)[react_id(Ec_core)=='EX_o2(e)']=-18;
-	## run dynamicFBA(), Ec_df will be an object of class \code{\link{optsol_dynamicFBA}}
-	Ec_df <- dynamicFBA(Ec_core,substrateRxns={'EX_glc(e)'},initConcentrations=40,
-	initBiomass=.035,timeStep=.25,nSteps=20,verbose=3)
+    mod <- Ec_core
 
-	## plot biomass and reactions
-	plot(Ec_df,plotRxns=c('EX_glc(e)','EX_ac(e)'));
+    # Change bounds for glucsoe, oxygen and acetate uptake
+    mod <- changeBounds(mod, react = "EX_glc(e)", lb = -12)
+    mod <- changeBounds(mod, react = "EX_o2(e)",  lb = -10)
+    mod <- changeBounds(mod, react = "EX_ac(e)",  lb = -10)
+
+    # initial values
+    init.source <- c("EX_ac(e)","EX_o2(e)","EX_glc(e)")
+    init.conc   <- c(10,50,28)
+    init.bmass  <- 0.01
+
+    # dFBA
+    Ec_df <- dynamicFBA(mod,exclUptakeRxns = c(),
+                        substrateRxns      = init.source,
+                        initConcentrations = init.conc,
+                        initBiomass        = init.bmass,
+                        timeStep=.1,nSteps=200,verbose=3)
+
+
+    # Plotting
+    plot(Ec_df,
+      plotRxns=c('EX_glc(e)','EX_ac(e)',"EX_for(e)","EX_o2(e)"),
+                      legend_cex=0.85,legend_xpos=0,legend_ypos=45)
+
 }
 }

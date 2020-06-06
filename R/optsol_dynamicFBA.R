@@ -103,6 +103,9 @@ setMethod("plot", signature("optsol_dynamicFBA","missing"),
     #               dottedline = TRUE,
                   plotRxns=NULL,
                    baseline = 0,
+                   legend_xpos=1.8,
+                   legend_ypos=ymax,
+                   legend_cex=1,
                     ...) {
                 if(missing(plotRxns)){
                    plot(x@timeVec,x@biomassVec,main='Biomass',xlab='Time',ylab=ylab);
@@ -133,7 +136,7 @@ setMethod("plot", signature("optsol_dynamicFBA","missing"),
        				  lines(spline(x@timeVec, x@concentrationMatrix[plotInd], n = 201, method = "natural"), col =i);
        				  }
 				}
-			legend(1.8,ymax, plotRxns, col=1:length(plotRxns), lty=1);
+			legend(legend_xpos,legend_ypos, plotRxns, col=1:length(plotRxns), lty=1,cex=legend_cex);
                 }
                   
 		#if (!missing(plotRxns)){		   }
